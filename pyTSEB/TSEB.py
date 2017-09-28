@@ -650,6 +650,7 @@ def TSEB_PT(
     F = np.asarray(LAI / f_c)  # Real LAI
     # Fraction of vegetation observed by the sensor
     f_theta = calc_F_theta_campbell(vza, F, w_C=w_C, Omega0=omega0, x_LAD=x_LAD)
+    f_theta = np.minimum(f_theta, 0.9)
 
     # Initially assume stable atmospheric conditions and set variables for
     # iteration of the Monin-Obukhov length
@@ -673,8 +674,8 @@ def TSEB_PT(
             else:
                 print("Finished interations with a max. L diff: " + str(np.max(L_diff[i])))
             break
-        print("Iteration " + str(n_iterations) +
-              ", max. L diff: " + str(np.max(L_diff[i])))
+        #print("Iteration " + str(n_iterations) +
+        #      ", max. L diff: " + str(np.max(L_diff[i])))
         iterations[
             np.logical_and(
                 L_diff >= L_thres,

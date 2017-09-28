@@ -241,7 +241,7 @@ def calc_theta_s(xlat, xlong, stdlng, doy, year, ftime):
     return np.asarray(theta_s)
 
 
-def calc_sun_angles(lat, lon, stdlon, doy, ftime):
+def calc_sun_angles(lat, lon, stdlon, doy, ftime, is_solar_time = False):
     '''Calculates the Sun Zenith and Azimuth Angles (SZA & SAA).
 
     Parameters
@@ -270,11 +270,14 @@ def calc_sun_angles(lat, lon, stdlon, doy, ftime):
         np.asarray, (lat, lon, stdlon, doy, ftime))
     # Calculate declination
     declination = 0.409 * np.sin((2.0 * np.pi * doy / 365.0) - 1.39)
-    EOT = 0.258 * np.cos(declination) - 7.416 * np.sin(declination) - \
-        3.648 * np.cos(2.0 * declination) - 9.228 * np.sin(2.0 * declination)
-    LC = (stdlon - lon) / 15.
-    time_corr = (-EOT / 60.) + LC
-    solar_time = ftime - time_corr
+    if not is_solar_time:
+        EOT = 0.258 * np.cos(declination) - 7.416 * np.sin(declination) - \
+            3.648 * np.cos(2.0 * declination) - 9.228 * np.sin(2.0 * declination)
+        LC = (stdlon - lon) / 15.
+        time_corr = (-EOT / 60.) + LC
+        solar_time = ftime - time_corr
+    else:
+        solar_time = ftime
     # Get the hour angle
     w = np.asarray((solar_time - 12.0) * 15.)
     # Get solar elevation angle

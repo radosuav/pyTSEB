@@ -475,7 +475,7 @@ def calc_R_S_Kustas(u_S, deltaT, params = {}):
     # Convert input scalars to numpy arrays
     u_S, deltaT = map(np.asarray, (u_S, deltaT))
     
-    deltaT = np.asarray(np.maximum(deltaT, 0.0))
+    deltaT = np.asarray(np.maximum(deltaT, 0.1))
     R_S = 1.0 / (c * deltaT**(1.0 / 3.0) + b * u_S)
     return np.asarray(R_S)
 

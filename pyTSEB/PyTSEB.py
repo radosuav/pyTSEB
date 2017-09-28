@@ -253,7 +253,7 @@ class PyTSEB():
         if not success:
             return
         in_data['SZA'], in_data['SAA'] = met.calc_sun_angles(
-            lat, lon, stdlon, doy, in_data['time'])
+            lat, lon, stdlon, doy, in_data['time'], is_solar_time = True)
         # Wind speed
         success, in_data['u'] = self._open_GDAL_image(
             self.p['u'], dims, 'Wind speed', subset)
@@ -386,7 +386,15 @@ class PyTSEB():
             'R_S1',
             'R_x1',
             'R_A1',
-            'flag')
+            'flag',
+            'd_0',
+            'z_0M',
+            'Sn_C1',
+            'Sn_S1',
+            'Ln_C1',
+            'Ln_S1',
+            'S_dn_dir',
+            'S_dn_dif')
         outdir = dirname(self.p['output_file'])
         if not exists(outdir):
             mkdir(outdir)
@@ -621,7 +629,12 @@ class PyTSEB():
         print("Processing...")
         
         if mask is None:
-            mask = np.ones(in_data['LAI'].shape)
+            mask = np.ones(in_data['LAI'].shape)      
+        
+        # MODIS LAI is green LAI, while in pyTSEB PAI should be used.
+        # https://modis.gsfc.nasa.gov/data/dataprod/mod15.php
+        # Therefore convert to PAI as well.
+        in_data['LAI'] = in_data['LAI'] / in_data['f_g'] 
         
         # Create the output dictionary
         out_data = dict()
